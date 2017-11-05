@@ -6,16 +6,19 @@
 
 ///Define Buttons
 //Reset Button
-int resetButtonPin = 2;
+int resetButtonPin = 25;
+int resetLed = 31;
+//speaker
+int piezoPin = 35;
 
 //Button1
-int button1Pin = 13;
-int led1Pin = 12;
+int button1Pin = 27;
+int led1Pin = 23;
 int button1State = 0; 
 
 //Button2
-int button2Pin = 11;
-int led2Pin = 10;
+int button2Pin = 24;
+int led2Pin = 29;
 int button2State = 0; 
 
 //Button3
@@ -44,12 +47,15 @@ void setup() {
   pinMode(led2Pin, OUTPUT);
   pinMode(led3Pin, OUTPUT);
   pinMode(led4Pin, OUTPUT);
+  pinMode(resetLed, OUTPUT);
   // initialize the pushbutton pin as an input:
   pinMode(resetButtonPin, INPUT);
   pinMode(button1Pin, INPUT);
   pinMode(button2Pin, INPUT);
   pinMode(button3Pin, INPUT);
   pinMode(button4Pin, INPUT);
+
+  
 }
 
 void loop() {
@@ -61,6 +67,8 @@ void loop() {
   int readingReset = digitalRead(resetButtonPin);
 
     if(pollingForPresses==1){
+
+      
       //Button 1
       if (reading1 != button1State && reading1 != lastbutton1State) {
         button1State = reading1;
@@ -68,8 +76,9 @@ void loop() {
           
               if (button1State == HIGH) {
                 // turn LED on:
-                  Serial.print("Button 1 ON");
+                  Serial.print("\nButton 1 ON");
                 digitalWrite(led1Pin, HIGH);
+                tone(piezoPin, 5000,500);
                 pollingForPresses = 0;
               }
          button1State = 0;
@@ -82,8 +91,9 @@ void loop() {
           
               if (button2State == HIGH) {
                 // turn LED on:
-                  Serial.print("Button 2 ON");
+                  Serial.print("\nButton 2 ON");
                 digitalWrite(led2Pin, HIGH);
+              tone(piezoPin, 5000,500);
                 pollingForPresses = 0;
               }
          button2State = 0;
@@ -96,7 +106,7 @@ void loop() {
           
               if (button3State == HIGH) {
                 // turn LED on:
-                  Serial.print("Button 3 ON");
+                  Serial.print("\nButton 3 ON");
                 digitalWrite(led3Pin, HIGH);
                 pollingForPresses = 0;
               }
@@ -110,8 +120,9 @@ void loop() {
           
               if (button4State == HIGH) {
                 // turn LED on:
-                  Serial.print("Button 4 ON");
+                  Serial.print("\nButton 4 ON");
                 digitalWrite(led4Pin, HIGH);
+             
                 pollingForPresses = 0;
               }
          button4State = 0;
@@ -126,7 +137,9 @@ void loop() {
               resetButtonState = digitalRead(resetButtonPin);
           
               if (resetButtonState == HIGH) {
-                Serial.print("Reset button HIGH");
+                Serial.print("\nReset button HIGH");
+                digitalWrite(resetLed, HIGH);
+                delay(1000);
                 resetButtons();
               }
          
@@ -155,12 +168,13 @@ void resetButtons() {
   button3State = 0;
   button4State = 0;
   
-  Serial.print("All the Buttons where reset!");
+  Serial.print("\nAll the Buttons where reset!");
   
   digitalWrite(led1Pin, LOW);
   digitalWrite(led2Pin, LOW);
   digitalWrite(led3Pin, LOW);
   digitalWrite(led4Pin, LOW);
+  digitalWrite(resetLed, LOW);
   digitalWrite(resetButtonPin, LOW);
   
   pollingForPresses = 1;
