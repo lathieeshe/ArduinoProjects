@@ -4,6 +4,17 @@
 //Only one button will light at a time, until the reset button is pressed.
 //The reset button turns off all LEDs and sets everything up for the next "round".
 
+// http://www.arduino.cc/en/Tutorial/LiquidCrystal
+// include the library code:
+// include the library code:
+#include <LiquidCrystal.h>
+
+// initialize the library by associating any needed LCD interface pin
+// with the arduino pin number it is connected to
+const int rs = 7, en = 8, d4 = 9, d5 = 10, d6 = 11, d7 = 12;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+
 ///Define Buttons
 //Reset Button
 int resetButtonPin = 25;
@@ -29,7 +40,9 @@ int button3State = 0;
 //Button4
 int button4Pin = 7;
 int led4Pin = 6;
-int button4State = 0; 
+int button4State = 0;
+
+char* buzzedplayer[]={"lathieeshe","cheryl"};
 
 int resetButtonState = 0;
 boolean pollingForPresses = 1;
@@ -55,7 +68,13 @@ void setup() {
   pinMode(button3Pin, INPUT);
   pinMode(button4Pin, INPUT);
 
-  
+   // set up the LCD's number of columns and rows: 
+  lcd.begin(16, 2);
+  // Print a message to the LCD.
+  lcd.setCursor(4,0);
+  lcd.print("READY");
+  delay(100);
+  lcd.clear();
 }
 
 void loop() {
@@ -76,9 +95,11 @@ void loop() {
           
               if (button1State == HIGH) {
                 // turn LED on:
-                  Serial.print("\nButton 1 ON");
-                digitalWrite(led1Pin, HIGH);
-                tone(piezoPin, 5000,500);
+                Serial.print("\nButton 1 ON");
+                  lcd.print(buzzedplayer[0]);
+               digitalWrite(led1Pin, HIGH);
+                playtone();
+               // lcdprint(buzzedplayer);
                 pollingForPresses = 0;
               }
          button1State = 0;
@@ -91,9 +112,10 @@ void loop() {
           
               if (button2State == HIGH) {
                 // turn LED on:
-                  Serial.print("\nButton 2 ON");
+                Serial.print("\nButton 2 ON");
                 digitalWrite(led2Pin, HIGH);
-              tone(piezoPin, 5000,500);
+               lcd.print(buzzedplayer[1]);
+                playtone();
                 pollingForPresses = 0;
               }
          button2State = 0;
@@ -106,7 +128,7 @@ void loop() {
           
               if (button3State == HIGH) {
                 // turn LED on:
-                  Serial.print("\nButton 3 ON");
+                Serial.print("\nButton 3 ON");
                 digitalWrite(led3Pin, HIGH);
                 pollingForPresses = 0;
               }
@@ -120,9 +142,8 @@ void loop() {
           
               if (button4State == HIGH) {
                 // turn LED on:
-                  Serial.print("\nButton 4 ON");
+                Serial.print("\nButton 4 ON");
                 digitalWrite(led4Pin, HIGH);
-             
                 pollingForPresses = 0;
               }
          button4State = 0;
@@ -130,16 +151,14 @@ void loop() {
       
     }
    //Check reset button
-   
-    if (pollingForPresses==0) {
-    
+   if (pollingForPresses==0) {
+     
       if (readingReset != resetButtonState && readingReset != lastResetState) {
               resetButtonState = digitalRead(resetButtonPin);
           
               if (resetButtonState == HIGH) {
                 Serial.print("\nReset button HIGH");
                 digitalWrite(resetLed, HIGH);
-                delay(1000);
                 resetButtons();
               }
          
@@ -169,13 +188,20 @@ void resetButtons() {
   button4State = 0;
   
   Serial.print("\nAll the Buttons where reset!");
-  
+  lcd.clear();
   digitalWrite(led1Pin, LOW);
   digitalWrite(led2Pin, LOW);
   digitalWrite(led3Pin, LOW);
   digitalWrite(led4Pin, LOW);
   digitalWrite(resetLed, LOW);
   digitalWrite(resetButtonPin, LOW);
-  
+ 
   pollingForPresses = 1;
 }
+
+
+
+void playtone(){
+tone(piezoPin, 5000,500);}
+
+
