@@ -6,6 +6,17 @@
 
 // http://www.arduino.cc/en/Tutorial/LiquidCrystal
 // include the library code:
+/* Comment this out to disable prints and save space */
+#define BLYNK_PRINT Serial1
+
+
+#include <BlynkSimpleStream.h>
+// Go to the Project Settings (nut icon)
+char auth[] = "8ad35991e21247b3b76fdb59c7a8f5ce";
+
+
+
+
 // include the library code:
 #include <LiquidCrystal.h>
 
@@ -53,6 +64,10 @@ int lastbutton3State = LOW;
 int lastbutton4State = LOW;
 int lastResetState = LOW;
 
+WidgetLCD lcdapp(V1);
+
+
+
 void setup() {
   Serial.begin(9600);
   // initialize the LED pin as an output:
@@ -68,16 +83,21 @@ void setup() {
   pinMode(button3Pin, INPUT);
   pinMode(button4Pin, INPUT);
 
+Blynk.begin(Serial, auth);
    // set up the LCD's number of columns and rows: 
   lcd.begin(16, 2);
   // Print a message to the LCD.
   lcd.setCursor(4,0);
   lcd.print("READY");
+  lcdapp.clear();
+  lcdapp.print(4, 0,"Game");
+  lcdapp.print(4, 1, "Start!");
   delay(100);
   lcd.clear();
 }
 
 void loop() {
+
 
   int reading1 = digitalRead(button1Pin);
   int reading2 = digitalRead(button2Pin);
@@ -92,14 +112,17 @@ void loop() {
       if (reading1 != button1State && reading1 != lastbutton1State) {
         button1State = reading1;
         button1State = digitalRead(button1Pin);
-          
+         
               if (button1State == HIGH) {
-                // turn LED on:
-                Serial.print("\nButton 1 ON");
-                  lcd.print(buzzedplayer[0]);
-               digitalWrite(led1Pin, HIGH);
-                playtone();
-               // lcdprint(buzzedplayer);
+                // turn LEDon:
+               // Serial.print("\nButton 1 ON");
+                lcd.print(buzzedplayer[0]);
+                 lcdapp.clear();
+  lcdapp.print(4, 0,"Lathieeshe");
+  lcdapp.print(4, 1, "Pressed");
+                digitalWrite(led1Pin, HIGH);
+                // playtone();
+                // lcdprint(buzzedplayer);
                 pollingForPresses = 0;
               }
          button1State = 0;
@@ -112,10 +135,15 @@ void loop() {
           
               if (button2State == HIGH) {
                 // turn LED on:
-                Serial.print("\nButton 2 ON");
+             //  Serial.print("\nButton 2 ON");
                 digitalWrite(led2Pin, HIGH);
-               lcd.print(buzzedplayer[1]);
-                playtone();
+                
+                lcd.print("cheryl");
+                 lcdapp.clear();
+ // lcdapp.print(4, 0,"Cheryl");
+  //lcdapp.print(4, 1, "Pressed");
+                
+                // playtone();
                 pollingForPresses = 0;
               }
          button2State = 0;
@@ -128,7 +156,7 @@ void loop() {
           
               if (button3State == HIGH) {
                 // turn LED on:
-                Serial.print("\nButton 3 ON");
+               // Serial.print("\nButton 3 ON");
                 digitalWrite(led3Pin, HIGH);
                 pollingForPresses = 0;
               }
@@ -152,13 +180,13 @@ void loop() {
     }
    //Check reset button
    if (pollingForPresses==0) {
-      digitalWrite(resetLed, HIGH);
+     
       if (readingReset != resetButtonState && readingReset != lastResetState) {
               resetButtonState = digitalRead(resetButtonPin);
           
               if (resetButtonState == HIGH) {
-                Serial.print("\nReset button HIGH");
-                
+                //Serial.print("\nReset button HIGH");
+                digitalWrite(resetLed, HIGH);
                 resetButtons();
               }
          
@@ -170,6 +198,8 @@ void loop() {
   lastbutton2State = reading2;
   lastbutton3State = reading3;  
   lastbutton4State = reading4;
+   
+    Blynk.run();
 }
 
 
@@ -189,6 +219,7 @@ void resetButtons() {
   
   Serial.print("\nAll the Buttons where reset!");
   lcd.clear();
+
   digitalWrite(led1Pin, LOW);
   digitalWrite(led2Pin, LOW);
   digitalWrite(led3Pin, LOW);
@@ -202,7 +233,6 @@ void resetButtons() {
 
 
 void playtone(){
-//tone(piezoPin, 5000,500);
-}
+tone(piezoPin, 5000,500);}
 
 
